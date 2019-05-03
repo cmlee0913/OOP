@@ -45,40 +45,50 @@ public:
 
 };
 
-class Player {
+class GameObject {
 	int pos;
 	char face[20];
 	Screen* screen;
 
 public:
-	Player(int pos, const char* face, Screen* screen) : pos(pos), screen(screen)
+	GameObject(int pos, const char* face, Screen* screen)
+		: pos(pos), screen(screen)
 	{
 		strcpy(this->face, face);
 	}
 
-	void setPosition(int pos) // setter
-	{
-		this->pos = pos;
-	}
-
-	int getPosition() // getter on "pos"
+	
+	int getPosition()
 	{
 		return pos;
 	}
+	void setPosition(int pos)
+	{
+		this->pos = pos;
+	}
+	void draw()
+	{
+		screen->draw(pos, face);
+	}
+};
 
+class Player : public GameObject {
+	
+public:
+	Player(int pos, const char* face, Screen* screen) 
+		: GameObject(pos, face, screen)
+	{	
+	}
+
+	
 	void moveLeft()
 	{
-		pos--;
+		setPosition(getPosition() - 1);
 	}
 
 	void moveRight()
 	{
-		pos--;
-	}
-
-	void draw()
-	{
-		screen->draw(pos, face);
+		setPosition(getPosition() + 1);
 	}
 
 	void update()
@@ -88,35 +98,17 @@ public:
 
 };
 
-class Enemy {
-	int pos;
-	char face[20];
-	Screen* screen;
-
+class Enemy : public GameObject {
+	
 public:
-	Enemy(int pos, const char* face, Screen* screen) : pos(pos), screen(screen)
+	Enemy(int pos, const char* face, Screen* screen) 
+		: GameObject(pos, face, screen)
 	{
-		strcpy(this->face, face);
-	}
-
-	void setPosition(int pos)
-	{
-		this->pos = pos;
-	}
-
-	int getPosition()
-	{
-		return pos;
-	}
-
-	void draw()
-	{
-		screen->draw(pos, face);
 	}
 
 	void moveRandom()
 	{
-		pos = pos + rand() % 3 - 1;
+		setPosition( getPosition() + rand() % 3 - 1);
 	}
 
 	void update()
@@ -125,53 +117,41 @@ public:
 	}
 };
 
-class Bullet {
-	int pos;
-	char face[20];
+class Bullet : public GameObject {
 	bool isFiring;
-	Screen* screen;
 
 public:
-	Bullet(int pos, const char* face, Screen* screen) : pos(pos), isFiring(false), screen(screen)
+	Bullet(int pos, const char* face, Screen* screen) 
+		: GameObject(pos, face, screen), isFiring(false)
 	{
-		strcpy(this->face, face);
-	}
-
-	void setPosition(int pos)
-	{
-		this->pos = pos;
-	}
-
-	int getPosition()
-	{
-		return pos;
 	}
 
 	void moveLeft()
 	{
-		pos--;
+		setPosition(getPosition() - 1);
 	}
 
 	void moveRight()
 	{
-		pos--;
+		setPosition(getPosition() + 1);
 	}
 
 	void draw()
 	{
 		if (isFiring == false) return;
-		screen->draw(pos, face);
+		GameObject::draw();
 	}
 
 	void fire(int player_pos)
 	{
 		isFiring = true;
-		pos = player_pos;
+		setPosition(player_pos);
 	}
 
 	void update(int enemy_pos)
 	{
 		if (isFiring == false) return;
+		int pos = getPosition();
 		if (pos < enemy_pos) {
 			pos = pos + 1;
 		}
@@ -181,6 +161,7 @@ public:
 		else {
 			isFiring = false;
 		}
+		setPosition(pos);
 	}
 };
 
