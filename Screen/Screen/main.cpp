@@ -17,8 +17,18 @@ class Screen {
 	char* screen;
 
 public:
-	Screen(int sz) : size(sz), screen(new char[sz + 1]) {}
-	~Screen() { delete[] screen; }
+	Screen(int sz) : size(sz), screen(new char[sz + 1]) 
+	{
+		printf("Screen constructor\n");
+	}
+	~Screen() 
+	{ 
+		printf("Screen destructor\n");
+		if (screen) {
+			delete[] screen;
+			screen = nullptr;
+		}
+	}
 
 	void draw(int pos, const char* face) 
 	{
@@ -54,7 +64,13 @@ public:
 	GameObject(int pos, const char* face, Screen* screen)
 		: pos(pos), screen(screen)
 	{
+		printf("GameObject constructor\n");
 		strcpy(this->face, face);
+	}
+
+	~GameObject()
+	{
+		printf("GameObject destructor\n");
 	}
 
 	
@@ -78,6 +94,12 @@ public:
 	Player(int pos, const char* face, Screen* screen) 
 		: GameObject(pos, face, screen)
 	{	
+		printf("Player constructor\n");
+	}
+
+	~Player()
+	{
+		printf("Player destructor\n");
 	}
 
 	
@@ -104,6 +126,12 @@ public:
 	Enemy(int pos, const char* face, Screen* screen) 
 		: GameObject(pos, face, screen)
 	{
+		printf("Enemy constructor\n");
+	}
+
+	~Enemy()
+	{
+		printf("Enemy destructor\n");
 	}
 
 	void moveRandom()
@@ -124,6 +152,11 @@ public:
 	Bullet(int pos, const char* face, Screen* screen) 
 		: GameObject(pos, face, screen), isFiring(false)
 	{
+		printf("Bullet constructor\n");
+	}
+	~Bullet()
+	{
+		printf("Bullet destructor\n");
 	}
 
 	void moveLeft()
@@ -165,6 +198,9 @@ public:
 	}
 };
 
+#define NORMAL_PLAY 0
+
+#if NORMAL_PLAY
 int main()
 {
 	Screen screen{ 80 };
@@ -205,3 +241,29 @@ int main()
 
 	return 0;
 }
+#else
+
+void test()
+{
+	Screen* screen = nullptr;
+
+	screen = new Screen(80);
+	/* 80 };
+	Player player = { 30, "(^_^)", &screen };
+	Enemy enemy{ 60, "(*--*)", &screen };
+	Bullet bullet(-1, "+", &screen);
+	*/
+	
+}
+
+int main()
+{
+	test();
+
+
+	Screen* another = nullptr;
+	int ch = _getch();
+	return 0;
+}
+
+#endif
